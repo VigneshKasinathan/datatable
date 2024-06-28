@@ -25,20 +25,12 @@ export class TableComponent implements OnInit {
     'border': '1px solid red',
     'border-radius': '5px'
   };
-
+  // Search terms
   private searchTermSubject = new BehaviorSubject<string>('');
+  // paginations
+  private pageSubject = new BehaviorSubject<{pageIndex:number, pageSize:number}>({pageIndex:this.pageIndex, pageSize:this.pageSize})
 
  constructor(private Api: ApiService ) {}
-// ngOnInit(): void {
-//   this.Api.getData().subscribe({
-//     next: (response) =>{
-//       this.post = response,
-//       this.filteredPost = response
-//     }, 
-//     error: (err) => this.errorMessage = err
-//   });
-// }
-
 
 ngOnInit(): void {
   this.filteredPost$ = this.Api.getData().pipe( 
@@ -49,59 +41,85 @@ ngOnInit(): void {
   );
 }
 
+// Search Functions & Paginations
 
 get searchResult$(): Observable<Data[]> {
   return this.searchTermSubject.asObservable().pipe(
     switchMap(term => {
-      if (term) {
-        return of(this.post.filter(post => {
-          if (typeof post.category === 'string'){
-            return post.title.toLowerCase().includes(term.toLowerCase()) ||
-            post.category.toLowerCase().includes(term.toLowerCase());
-          } else {
-            console.warn("Unexpected data type for post.category");
-            return [];
+      return this.pageSubject.asObservable().pipe(
+        switchMap(({ pageIndex, pageSize}) => {
+          let filteredPosts = this.post;
+          if (term) {
+            filteredPosts = filteredPosts.filter(post => {
+              if (typeof post.category === 'string'){
+                return post.title.toLowerCase().includes(term.toLowerCase()) ||
+                post.category.toLowerCase().includes(term.toLowerCase());
+              } else {
+                console.warn("Unexpected data type for post.category");
+                return false;
+              }
+            })
           }
-        })).pipe(map(data => {
-          this.filteredPostLength = data.length;
+          
+          this.filteredPostLength = filteredPosts.length;
           console.log(this.filteredPostLength);
-          return data.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);  
-        }) 
-        );
-      } else {
-        return of(this.post);
-      }
+          const startIndex = pageIndex * pageSize;
+          const endIndex = startIndex + pageSize;
+          console.log(endIndex, startIndex);
+          return of(filteredPosts.slice(startIndex, endIndex));
+          })
+      );
     })
   );
 }
 
-// onSearchTermChanged(): void{
-//   console.log('Search term:', this.searchTerms); 
-//   if (this.searchTerms) {
-//     this.filteredPost = this.post.filter(post => 
-//       post.title.toLowerCase().includes(this.searchTerms.toLowerCase()) ||
-//       post.category.toLowerCase().includes(this.searchTerms.toLowerCase())
-//     );
-//     console.log('Filtered posts:', this.filteredPost);    
-//   }else {
-//   this.filteredPost = this.post;
-// }
+// get searchResult$(): Observable<Data[]> {
+//   return this.searchTermSubject.asObservable().pipe(
+//     switchMap(term => {
+//       if (term) {
+//         return of(this.post.filter(post => {
+//           if (typeof post.category === 'string'){
+//             return post.title.toLowerCase().includes(term.toLowerCase()) ||
+//             post.category.toLowerCase().includes(term.toLowerCase());
+//           } else {
+//             console.warn("Unexpected data type for post.category");
+//             return [];
+//           }
+//         })).pipe(map(data => {
+//           this.filteredPostLength = data.length;
+//           console.log(this.filteredPostLength);
+//           return data.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);  
+//         }) 
+//         );
+//       } else {
+//         return of(this.post);
+//       }
+//     })
+//   );
 // }
 
 previousPage(){
   if(this.pageIndex > 0) {
     this.pageIndex--;
+    this.pageSubject.next({ pageIndex: this.pageIndex, pageSize: this.pageSize});
   }
 }
 
 nextPage() {
   if (this.pageIndex < Math.ceil(this.filteredPostLength / this.pageSize) - 1) {
     this.pageIndex++;
+    this.pageSubject.next({ pageIndex: this.pageIndex, pageSize: this.pageSize});
   }
 }
 
 onSearchTermChanged(): void {
+  this.pageIndex = 0;
   this.searchTermSubject.next(this.searchTerms); // Emit new search term
+  this.pageSubject.next({ pageIndex: this.pageIndex, pageSize: this.pageSize});
+}
+
+get totalPages():number {
+  return  Math.ceil(this.filteredPostLength / this.pageSize)
 }
 
 }

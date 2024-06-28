@@ -1,19 +1,24 @@
-<div>
 
-</div>
-<input 
-    type="text" 
-    placeholder="Search..." 
-    [(ngModel)]="searchTerms" 
-    (ngModelChange)="onSearchTermChanged()"
-  />
- 
-  <p>Search term: {{ searchTerms }}</p>
+
+
 
 <div *ngIf="errorMessage" [ngStyle]="errorStyle">{{ errorMessage }}</div>
 
-
-<table>
+<div *ngIf="filteredPost$ |async as filteredPost; else loading">
+  <div *ngIf="filteredPost.length; else noData">
+    <div>
+      <input 
+      type="text" 
+      placeholder="Search..." 
+      [(ngModel)]="searchTerms" 
+      (ngModelChange)="onSearchTermChanged()"
+      />
+    
+      <p>Search term: {{ searchTerms }}</p>
+    </div>
+    
+    
+    <table>
     <thead>
       <tr>
         <th>ID</th>
@@ -39,9 +44,18 @@
       </tr>
     </tbody>
   </table>
+  </div>
+</div>
+
+
 
   <div *ngIf="filteredPostLength > pageSize">
-    <button (click)="previousPage()">Previous</button>
+    <button (click)="previousPage()" [disabled]="pageIndex === 0">Previous</button>
 
-    <button (click)="nextPage()">Next</button>
+    <button (click)="nextPage()" [disabled]="pageIndex >= totalPages - 1">Next</button>
   </div>
+
+  <ng-template #noData>Loading...</ng-template>
+  <ng-template #loading>Loading...</ng-template>
+
+  
