@@ -9,7 +9,7 @@ import { Observable, BehaviorSubject, switchMap, of, map } from 'rxjs';
   styleUrls: ['./table.component.scss']
 })
 export class TableComponent implements OnInit {
-
+  isLoading = false; 
   post: Data[] = [];
   filteredPost$: Observable<Data[]> = of([]); 
   searchTerms = '';
@@ -17,6 +17,7 @@ export class TableComponent implements OnInit {
   pageIndex = 0;
   pageSize = 5;
   filteredPostLength = 0;
+  
   errorStyle = {
     'color': 'red',
     'font-weight': 'bold',
@@ -35,6 +36,7 @@ export class TableComponent implements OnInit {
 ngOnInit(): void {
   this.filteredPost$ = this.Api.getData().pipe( 
     switchMap(response => {
+      console.log('Data fetched successfully:', response);
       this.post = response;
       return this.searchResult$
     })
@@ -73,30 +75,6 @@ get searchResult$(): Observable<Data[]> {
   );
 }
 
-// get searchResult$(): Observable<Data[]> {
-//   return this.searchTermSubject.asObservable().pipe(
-//     switchMap(term => {
-//       if (term) {
-//         return of(this.post.filter(post => {
-//           if (typeof post.category === 'string'){
-//             return post.title.toLowerCase().includes(term.toLowerCase()) ||
-//             post.category.toLowerCase().includes(term.toLowerCase());
-//           } else {
-//             console.warn("Unexpected data type for post.category");
-//             return [];
-//           }
-//         })).pipe(map(data => {
-//           this.filteredPostLength = data.length;
-//           console.log(this.filteredPostLength);
-//           return data.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);  
-//         }) 
-//         );
-//       } else {
-//         return of(this.post);
-//       }
-//     })
-//   );
-// }
 
 previousPage(){
   if(this.pageIndex > 0) {
