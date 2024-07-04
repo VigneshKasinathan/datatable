@@ -7,22 +7,19 @@
 
 
   <div class="table-width" *ngIf="filteredPost$ |async as filteredPost; else loading">
-    <div *ngIf="filteredPost.length > 0 ; else noData">
-      <div class="search-block">
-        <input 
-        type="text" 
-        placeholder="Search..." 
-        class="search-bar"
-        [(ngModel)]="searchTerms" 
-        (ngModelChange)="onSearchTermChanged()"
-        />
-   
-      
-        <p *ngIf="searchTerms">Search : {{ searchTerms }}</p>
-      </div>
+    <div class="search-block">
+      <input 
+      type="text" 
+      placeholder="Search..." 
+      class="search-bar"
+      [(ngModel)]="searchTerms" 
+      (ngModelChange)="onSearchTermChanged()"
+      />
+      <p *ngIf="searchTerms">Search : {{ searchTerms }}</p>
+    </div>
       
       <table>
-      <thead *ngIf="filteredPost" style="border-radius: 4px;"> 
+      <thead style="border-radius: 4px;"> 
         <tr>
           <th>ID</th>
           <th>Title</th>
@@ -35,16 +32,19 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of filteredPost; let i = index" [ngClass]="{'odd-row': i % 2 !== 0, 'even-row': i % 2 === 0}">
-          <td ><strong>{{ item.id }}</strong>.</td>
-          <td>{{ item.title }}</td>
-          <td>{{ item.price }}</td>
-          <td>{{ item.description }}</td>
-          <td [innerHTML]="item.category | italic"></td>
-          <td><img [src]="item.image" alt="{{ item.title }}" width="50"></td>
-          <td>{{ item.rating.rate }}</td>
-          <td>{{ item.rating.count }}</td>
-        </tr>
+        <ng-container *ngIf="filteredPost.length > 0 ; else noData">
+          <tr *ngFor="let item of filteredPost; let i = index" [ngClass]="{'odd-row': i % 2 !== 0, 'even-row': i % 2 === 0}">
+            <td ><strong>{{ item.id }}</strong>.</td>
+            <td>{{ item.title }}</td>
+            <td>{{ item.price }}</td>
+            <td>{{ item.description }}</td>
+            <td [innerHTML]="item.category | italic"></td>
+            <td><img [src]="item.image" alt="{{ item.title }}" width="50"></td>
+            <td>{{ item.rating.rate }}</td>
+            <td>{{ item.rating.count }}</td>
+          </tr>
+        </ng-container>
+       
       </tbody>
     </table>
 
@@ -55,18 +55,19 @@
             <option *ngFor="let size of pageSizes" [value]="size">{{size}}</option>
           </select>
       </div>
-      <div *ngIf="filteredPostLength > pageSize">
+      <div>
         <button (click)="previousPage()" [disabled]="pageIndex === 0"><fa-icon [icon]="faArrowLeft"></fa-icon></button>
-          <span> {{pageIndex + 1}} - {{pageSize}} of {{totalPages}}</span>
+          <span *ngIf="filteredPostLength > pageSize"> {{pageIndex + 1}} - {{pageSize}} of {{totalPages}}</span>
         <button (click)="nextPage()" [disabled]="pageIndex >= totalPages - 1"><fa-icon [icon]="faArrowRight"></fa-icon></button>
       </div>
     </div>
-
-
-    </div>
   </div>
   
-    <ng-template #noData>Data...</ng-template>
+  <ng-template #noData>
+    <tr>
+      <td colspan="8" class="no-data" align="center">No data available</td>
+    </tr>
+  </ng-template>
     <ng-template #loading>
       <div class="spinner-container">
         <div class="spinner"></div>  
