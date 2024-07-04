@@ -99,5 +99,37 @@ table {
   }
 }
 
+.table-controller {
+  display : flex;
+  justify-content: space-between; 
+  button {
+    color: #fff;
+    background: #a4afc8;
+    border: none;
+    padding: 7px 10px;
+    font-size: 15px;
+    font-weight: bold;
+  }
+  span {
+    padding: 0px 10px;
+    color: #7a7a7a;
+    font-weight: bold;
+    font-size: 12px;
+  }
+} 
 
-
+.dynamic-row {
+  display: flex;
+  label {
+    color: #a4afc8;
+    font-weight: bolder;
+    font-size: 13px;
+    padding: 10px;
+  }
+  select{
+    background-color: #a4afc8;
+    border: none;
+    color: #fff;
+    padding: 10px;
+  }
+}

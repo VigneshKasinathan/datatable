@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Data } from './data';
 import { ApiService } from '../api.service';
 import { Observable, BehaviorSubject, switchMap, of, map } from 'rxjs';
+import { faSearch, faArrowLeft, faArrowRight} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-table',
@@ -9,6 +10,12 @@ import { Observable, BehaviorSubject, switchMap, of, map } from 'rxjs';
   styleUrls: ['./table.component.scss']
 })
 export class TableComponent implements OnInit {
+
+
+  faSearch = faSearch
+  faArrowLeft = faArrowLeft
+  faArrowRight = faArrowRight 
+
   isLoading = false; 
   post: Data[] = [];
   filteredPost$: Observable<Data[]> = of([]); 
@@ -16,6 +23,7 @@ export class TableComponent implements OnInit {
   errorMessage = '';
   pageIndex = 0;
   pageSize = 5;
+  pageSizes:number[] = [5,10, 15, 20];
   filteredPostLength = 0;
   
   errorStyle = {
@@ -94,6 +102,13 @@ onSearchTermChanged(): void {
   this.pageIndex = 0;
   this.searchTermSubject.next(this.searchTerms); // Emit new search term
   this.pageSubject.next({ pageIndex: this.pageIndex, pageSize: this.pageSize});
+}
+
+onPageSizeChange(event: Event): void {
+  const newPageSize = +(event.target as HTMLSelectElement).value;
+  this.pageSize = newPageSize;
+  this.pageIndex = 0;
+  this.pageSubject.next({ pageIndex: this.pageIndex, pageSize: this.pageSize})
 }
 
 get totalPages():number {

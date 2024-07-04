@@ -16,7 +16,7 @@
         [(ngModel)]="searchTerms" 
         (ngModelChange)="onSearchTermChanged()"
         />
-        <i class="fas fa-coffee"></i>
+   
       
         <p *ngIf="searchTerms">Search : {{ searchTerms }}</p>
       </div>
@@ -47,11 +47,22 @@
         </tr>
       </tbody>
     </table>
-    <div *ngIf="filteredPostLength > pageSize">
-      <button (click)="previousPage()" [disabled]="pageIndex === 0">Previous</button>
-      <span> {{pageIndex + 1}} - {{pageSize}} of {{totalPages}}</span>
-      <button (click)="nextPage()" [disabled]="pageIndex >= totalPages - 1">Next</button>
+
+    <div class="table-controller">
+      <div class="dynamic-row">
+          <label for="rowsPerPage">Rows per page:</label>
+          <select id="'rowsPerPage" [(ngModel)]="pageSize" (change)="onPageSizeChange($event)">
+            <option *ngFor="let size of pageSizes" [value]="size">{{size}}</option>
+          </select>
+      </div>
+      <div *ngIf="filteredPostLength > pageSize">
+        <button (click)="previousPage()" [disabled]="pageIndex === 0"><fa-icon [icon]="faArrowLeft"></fa-icon></button>
+          <span> {{pageIndex + 1}} - {{pageSize}} of {{totalPages}}</span>
+        <button (click)="nextPage()" [disabled]="pageIndex >= totalPages - 1"><fa-icon [icon]="faArrowRight"></fa-icon></button>
+      </div>
     </div>
+
+
     </div>
   </div>
   
