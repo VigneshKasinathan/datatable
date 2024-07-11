@@ -3,9 +3,6 @@
 
 
 <div *ngIf="errorMessage" [ngStyle]="errorStyle">{{ errorMessage }}</div>
-
-
-
   <div class="table-width" *ngIf="filteredPost$ |async as filteredPost; else loading">
     <div class="search-block">
       <input 
@@ -17,36 +14,98 @@
       />
       <p *ngIf="searchTerms">Search : {{ searchTerms }}</p>
     </div>
-      
-      <table>
-      <thead style="border-radius: 4px;"> 
-        <tr>
-          <th>ID</th>
-          <th>Title</th>
-          <th>Price</th>
-          <th>Description</th>
-          <th>Category</th>
-          <th>Image</th>
-          <th>Rating Rate</th>
-          <th>Rating Count</th>
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngIf="filteredPost.length > 0 ; else noData">
-          <tr *ngFor="let item of filteredPost; let i = index" [ngClass]="{'odd-row': i % 2 !== 0, 'even-row': i % 2 === 0}">
-            <td ><strong>{{ item.id }}</strong>.</td>
-            <td>{{ item.title }}</td>
-            <td>{{ item.price }}</td>
-            <td>{{ item.description }}</td>
-            <td [innerHTML]="item.category | italic"></td>
-            <td><img [src]="item.image" alt="{{ item.title }}" width="50"></td>
-            <td>{{ item.rating.rate }}</td>
-            <td>{{ item.rating.count }}</td>
-          </tr>
-        </ng-container>
-       
-      </tbody>
-    </table>
+      <div class="table-container">
+        <table>
+          <thead style="border-radius: 4px;"> 
+            <tr>
+              <th class="id" (click)="toggleSort('id')">
+                <div class="align-top">
+                  <div class="icons-align">
+                    ID
+                  </div>            
+                  <div class="sort-icons">
+                    <fa-icon [icon]="sortKey === 'id' && sortDirection === 'asc' ? faArrowUp : faArrowDown" 
+                    *ngIf="sortKey === 'id'"></fa-icon>                    </div>
+                </div>  
+                
+              </th>
+              <th class="title"(click)="toggleSort('title')">
+                <div class="align-top">
+                  <div class="icons-align">
+                    Title    
+                  </div>
+                  <div class="sort-icons">
+                    <fa-icon [icon]="sortKey === 'title' && sortDirection === 'asc' ? faArrowUp : faArrowDown" 
+                    *ngIf="sortKey === 'title'"></fa-icon>                  
+                  </div>
+                </div>
+              </th>
+              <th class="price" (click)="toggleSort('price')"> 
+                <div class="align-top">
+                  <div class="icons-align">
+                    Price
+                  </div>
+                  <div class="sort-icons">
+                    <fa-icon [icon]="faArrowUp" class="sort-icon up" [class.active]="sortKey === 'price' && sortDirection === 'asc'"></fa-icon>
+                    <fa-icon [icon]="faArrowDown" class="sort-icon down sort-arrow" [class.active]="sortKey === 'price' && sortDirection === 'desc'"></fa-icon>
+                  </div>
+                </div>
+              </th>
+              <th class="description">Description</th>
+              <th class="category" (click)="toggleSort('category')"> 
+                <div class="align-top">
+                  <div class="icons-align">
+                    Category
+                  </div>
+                  <div class="sort-icons">
+                    <fa-icon [icon]="faArrowUp" class="sort-icon up" [class.active]="sortKey === 'category' && sortDirection === 'asc'"></fa-icon>
+                    <fa-icon [icon]="faArrowDown" class="sort-icon down sort-arrow" [class.active]="sortKey === 'category' && sortDirection === 'desc'"></fa-icon>
+                   </div>
+                </div>
+              </th>
+              <th class="image">Image</th>
+              <th class="rating-rate" (click)="toggleSort('rating.rate')">
+                <div class="align-top">
+                  <div class="icons-align">
+                    Rating Rate 
+                  </div>
+                  <div class="sort-icons">
+                    <fa-icon [icon]="faArrowUp" class="sort-icon up" [class.active]="sortKey === 'rating.rate' && sortDirection === 'asc'"></fa-icon>
+                    <fa-icon [icon]="faArrowDown" class="sort-icon down sort-arrow" [class.active]="sortKey === 'rating.rate' && sortDirection === 'desc'"></fa-icon>
+                  </div>
+                </div>
+              </th>
+              <th class="rating-count" (click)="toggleSort('rating.count')"> 
+                <div class="align-top">
+                  <div class="icons-align">
+                    Rating Count
+                  </div>
+                  <div class="sort-icons">
+                    <fa-icon [icon]="faArrowUp" class="sort-icon up" [class.active]="sortKey === 'rating.count' && sortDirection === 'asc'"></fa-icon>
+                    <fa-icon [icon]="faArrowDown" class="sort-icon down sort-arrow" [class.active]="sortKey === 'rating.count' && sortDirection === 'desc'"></fa-icon>
+                  </div>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngIf="filteredPost.length > 0 ; else noData">
+              <tr *ngFor="let item of filteredPost; let i = index" [ngClass]="{'odd-row': i % 2 !== 0, 'even-row': i % 2 === 0}">
+                <td ><strong>{{ item.id }}</strong>.</td>
+                <td>{{ item.title }}</td>
+                <td class="center">{{ item.price }}</td>
+                <td>{{ item.description }}</td>
+                <td class="center" [innerHTML]="item.category | italic"></td>
+                <td><img [src]="item.image" alt="{{ item.title }}" width="50"></td>
+                <td class="center">{{ item.rating.rate }}</td>
+                <td class="center">{{ item.rating.count }}</td>
+              </tr>
+            </ng-container>
+           
+          </tbody>
+        </table>
+      </div>
+
 
     <div class="table-controller">
       <div class="dynamic-row">

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Data } from './data';
 import { ApiService } from '../api.service';
-import { Observable, BehaviorSubject, switchMap, of, map } from 'rxjs';
-import { faSearch, faArrowLeft, faArrowRight} from '@fortawesome/free-solid-svg-icons';
+import { Observable, BehaviorSubject, switchMap, of  } from 'rxjs';
+import { faSearch, faArrowLeft, faArrowRight, faSortUp, faSortDown} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-table',
@@ -15,6 +15,8 @@ export class TableComponent implements OnInit {
   faSearch = faSearch
   faArrowLeft = faArrowLeft
   faArrowRight = faArrowRight 
+  faArrowUp = faSortUp
+  faArrowDown = faSortDown
 
   isLoading = false; 
   post: Data[] = [];
@@ -25,6 +27,9 @@ export class TableComponent implements OnInit {
   pageSize = 5;
   pageSizes:number[] = [5,10, 15, 20];
   filteredPostLength = 0;
+
+  sortKey = ''; // Keeps track of the current sorting column
+  sortDirection = 'asc'; // Default sorting direction
   
   errorStyle = {
     'color': 'red',
@@ -46,9 +51,22 @@ ngOnInit(): void {
     switchMap(response => {
       console.log('Data fetched successfully:', response);
       this.post = response;
+      this.applySorting();
       return this.searchResult$
     })
   );
+}
+
+private applySorting(): void {
+  if (this.sortKey) {
+    this.post.sort((a, b) => {
+      const valueA = this.resolveProperty(a, this.sortKey);
+      const valueB = this.resolveProperty(b, this.sortKey);
+      if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
+      if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
 }
 
 // Search Functions & Paginations
@@ -69,6 +87,17 @@ get searchResult$(): Observable<Data[]> {
                 return false;
               }
             })
+          }
+
+          //  Sort logic
+          if (this.sortKey) {
+            filteredPosts.sort((a, b) => {
+              const valueA = this.resolveProperty(a, this.sortKey);
+              const valueB = this.resolveProperty(b, this.sortKey);
+              if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
+              if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
+              return 0;
+            });
           }
           
           this.filteredPostLength = filteredPosts.length;
@@ -110,6 +139,22 @@ onPageSizeChange(event: Event): void {
   this.pageIndex = 0;
   this.pageSubject.next({ pageIndex: this.pageIndex, pageSize: this.pageSize})
 }
+
+toggleSort(key: string):void {
+  if (this.sortKey === key) {
+    this.sortDirection = this.sortDirection === 'asc'? 'desc' : 'asc';
+  } else {
+    this.sortKey = key;
+    this.sortDirection = 'asc';
+  }
+  this.searchTermSubject.next(this.searchTerms); // Emit new search term
+  this.pageSubject.next({ pageIndex: this.pageIndex, pageSize: this.pageSize});
+}
+
+resolveProperty(obj: any, path: string) {
+  return path.split('.').reduce((prev, curr) => prev && prev[curr], obj);
+}
+
 
 get totalPages():number {
   return  Math.ceil(this.filteredPostLength / this.pageSize)
