@@ -46,8 +46,8 @@
                     Price
                   </div>
                   <div class="sort-icons">
-                    <fa-icon [icon]="faArrowUp" class="sort-icon up" [class.active]="sortKey === 'price' && sortDirection === 'asc'"></fa-icon>
-                    <fa-icon [icon]="faArrowDown" class="sort-icon down sort-arrow" [class.active]="sortKey === 'price' && sortDirection === 'desc'"></fa-icon>
+                    <fa-icon [icon]="sortKey === 'price' && sortDirection === 'asc' ? faArrowUp : faArrowDown" 
+                    *ngIf="sortKey === 'price'"></fa-icon>
                   </div>
                 </div>
               </th>
@@ -58,9 +58,9 @@
                     Category
                   </div>
                   <div class="sort-icons">
-                    <fa-icon [icon]="faArrowUp" class="sort-icon up" [class.active]="sortKey === 'category' && sortDirection === 'asc'"></fa-icon>
-                    <fa-icon [icon]="faArrowDown" class="sort-icon down sort-arrow" [class.active]="sortKey === 'category' && sortDirection === 'desc'"></fa-icon>
-                   </div>
+                    <fa-icon [icon]="sortKey === 'category' && sortDirection === 'asc' ? faArrowUp : faArrowDown" 
+                    *ngIf="sortKey === 'category'"></fa-icon>
+                  </div>
                 </div>
               </th>
               <th class="image">Image</th>
@@ -70,8 +70,8 @@
                     Rating Rate 
                   </div>
                   <div class="sort-icons">
-                    <fa-icon [icon]="faArrowUp" class="sort-icon up" [class.active]="sortKey === 'rating.rate' && sortDirection === 'asc'"></fa-icon>
-                    <fa-icon [icon]="faArrowDown" class="sort-icon down sort-arrow" [class.active]="sortKey === 'rating.rate' && sortDirection === 'desc'"></fa-icon>
+                    <fa-icon [icon]="sortKey === 'rating.rate' && sortDirection === 'asc' ? faArrowUp : faArrowDown" 
+                    *ngIf="sortKey === 'rating.rate'"></fa-icon>
                   </div>
                 </div>
               </th>
@@ -81,8 +81,8 @@
                     Rating Count
                   </div>
                   <div class="sort-icons">
-                    <fa-icon [icon]="faArrowUp" class="sort-icon up" [class.active]="sortKey === 'rating.count' && sortDirection === 'asc'"></fa-icon>
-                    <fa-icon [icon]="faArrowDown" class="sort-icon down sort-arrow" [class.active]="sortKey === 'rating.count' && sortDirection === 'desc'"></fa-icon>
+                    <fa-icon [icon]="sortKey === 'rating.count' && sortDirection === 'asc' ? faArrowUp : faArrowDown" 
+                    *ngIf="sortKey === 'rating.count'"></fa-icon>
                   </div>
                 </div>
               </th>
@@ -93,9 +93,9 @@
               <tr *ngFor="let item of filteredPost; let i = index" [ngClass]="{'odd-row': i % 2 !== 0, 'even-row': i % 2 === 0}">
                 <td ><strong>{{ item.id }}</strong>.</td>
                 <td>{{ item.title }}</td>
-                <td class="center">{{ item.price }}</td>
+                <td>{{ item.price }}</td>
                 <td>{{ item.description }}</td>
-                <td class="center" [innerHTML]="item.category | italic"></td>
+                <td [innerHTML]="item.category | italic"></td>
                 <td><img [src]="item.image" alt="{{ item.title }}" width="50"></td>
                 <td class="center">{{ item.rating.rate }}</td>
                 <td class="center">{{ item.rating.count }}</td>

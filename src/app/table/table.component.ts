@@ -39,12 +39,12 @@ export class TableComponent implements OnInit {
     'border': '1px solid red',
     'border-radius': '5px'
   };
-  // Search terms
-  private searchTermSubject = new BehaviorSubject<string>('');
-  // paginations
-  private pageSubject = new BehaviorSubject<{pageIndex:number, pageSize:number}>({pageIndex:this.pageIndex, pageSize:this.pageSize})
+// Search terms
+private searchTermSubject = new BehaviorSubject<string>('');
+// paginations
+private pageSubject = new BehaviorSubject<{pageIndex:number, pageSize:number}>({pageIndex:this.pageIndex, pageSize:this.pageSize})
 
- constructor(private Api: ApiService ) {}
+constructor(private Api: ApiService ) {}
 
 ngOnInit(): void {
   this.filteredPost$ = this.Api.getData().pipe( 
@@ -56,10 +56,37 @@ ngOnInit(): void {
     })
   );
 }
+  // Observable to handle search and pagination
+  get searchResult$(): Observable<Data[]> {
+    return this.searchTermSubject.asObservable().pipe(
+      switchMap(term => {
+        return this.pageSubject.asObservable().pipe(
+          switchMap(({ pageIndex, pageSize }) => {
+            const filteredPosts = this.filterPosts(term); // Filter based on search term
+            this.applySorting(filteredPosts); // Apply sorting after filtering
+            this.filteredPostLength = filteredPosts.length;
+            const startIndex = pageIndex * pageSize;
+            const endIndex = startIndex + pageSize;
+            return of(filteredPosts.slice(startIndex, endIndex)); // Return paginated results
+          })
+        );
+      })
+    );
+  }
 
-private applySorting(): void {
+filterPosts(term: string): Data[] {
+  if (term) {
+    return this.post.filter(post => {
+      return post.title.toLowerCase().includes(term.toLowerCase()) ||
+        (typeof post.category === 'string' && post.category.toLowerCase().includes(term.toLowerCase()));
+    });
+  }
+  return this.post;
+}
+
+applySorting(posts: Data[] = this.post): void {
   if (this.sortKey) {
-    this.post.sort((a, b) => {
+    posts.sort((a, b) => {
       const valueA = this.resolveProperty(a, this.sortKey);
       const valueB = this.resolveProperty(b, this.sortKey);
       if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
@@ -68,50 +95,6 @@ private applySorting(): void {
     });
   }
 }
-
-// Search Functions & Paginations
-
-get searchResult$(): Observable<Data[]> {
-  return this.searchTermSubject.asObservable().pipe(
-    switchMap(term => {
-      return this.pageSubject.asObservable().pipe(
-        switchMap(({ pageIndex, pageSize}) => {
-          let filteredPosts = this.post;
-          if (term) {
-            filteredPosts = filteredPosts.filter(post => {
-              if (typeof post.category === 'string'){
-                return post.title.toLowerCase().includes(term.toLowerCase()) ||
-                post.category.toLowerCase().includes(term.toLowerCase());
-              } else {
-                console.warn("Unexpected data type for post.category");
-                return false;
-              }
-            })
-          }
-
-          //  Sort logic
-          if (this.sortKey) {
-            filteredPosts.sort((a, b) => {
-              const valueA = this.resolveProperty(a, this.sortKey);
-              const valueB = this.resolveProperty(b, this.sortKey);
-              if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
-              if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
-              return 0;
-            });
-          }
-          
-          this.filteredPostLength = filteredPosts.length;
-          console.log(this.filteredPostLength);
-          const startIndex = pageIndex * pageSize;
-          const endIndex = startIndex + pageSize;
-          console.log(endIndex, startIndex);
-          return of(filteredPosts.slice(startIndex, endIndex));
-          })
-      );
-    })
-  );
-}
-
 
 previousPage(){
   if(this.pageIndex > 0) {
@@ -142,6 +125,8 @@ onPageSizeChange(event: Event): void {
 
 toggleSort(key: string):void {
   if (this.sortKey === key) {
+    console.log(this.sortKey);
+
     this.sortDirection = this.sortDirection === 'asc'? 'desc' : 'asc';
   } else {
     this.sortKey = key;
