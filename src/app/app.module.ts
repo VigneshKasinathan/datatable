@@ -9,13 +9,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ItalicPipe } from './table/italic.pipe'
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     TableComponent,
-    ItalicPipe
+    ItalicPipe,
+    ShoppingCartComponent
   ],
   imports: [
     BrowserModule,
