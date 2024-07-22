@@ -1,0 +1,33 @@
+<div *ngIf="items.length > 0" class="table-cart">
+    <table>
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Item Code</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Brand</th>
+                <th>Actions</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of items; let i = index">
+                <td>{{ item.itemName }}</td>
+                <td>{{ item.itemCode }}</td>
+                <td> ₹ {{ item.Price }}</td>
+                <td>  
+                    <button (click)="decrementQuantity(i)" [disabled]="editingIndex !== i" class="btn-toggle">-</button>
+                        {{ item.Quantity }}
+                    <button (click)="incrementQuantity(i)" [disabled]="editingIndex !== i" class="btn-toggle">+</button>
+                </td>
+                <td>{{ item.Brand }}</td>
+                <td>
+                    <button (click)="saveEdit(i)" [disabled]="editingIndex !== null && editingIndex !== i">Edit</button>
+                    <button (click)="deleteItem(i)" [disabled]="editingIndex !== null && editingIndex !== i">Delete</button>
+                </td>
+                <td> ₹ {{ +item.Price * item.Quantity }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

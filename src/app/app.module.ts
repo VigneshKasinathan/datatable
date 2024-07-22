@@ -10,6 +10,7 @@ import { ItalicPipe } from './table/italic.pipe'
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
+import { ShoppingTableComponent } from './shopping-table/shopping-table.component';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
     AppComponent,
     TableComponent,
     ItalicPipe,
-    ShoppingCartComponent
+    ShoppingCartComponent,
+    ShoppingTableComponent
   ],
   imports: [
     BrowserModule,

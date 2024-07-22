@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { Shopping } from './shopping';
 
 @Component({
@@ -18,7 +18,11 @@ newItems: Shopping = {
   Quantity: 0
 }
 
+totalQuantity = 0
+
 editingIndex: number|null= null;
+
+constructor(private cdr: ChangeDetectorRef) {}
 
 additem() {
 if(this.editingIndex != null) {
@@ -41,18 +45,19 @@ resetNewItem(){
 }
 
 incrementQuantity(index: number) {
-  this.items[index].Quantity++
-  if(this.editingIndex === index) {
-    this.newItems.Quantity = this.items[index].Quantity
+  console.log('Handling increment for index:', index); // Debugging line
+  this.items[index].Quantity++;
+  if (this.editingIndex === index) {
+    this.newItems.Quantity = this.items[index].Quantity;
   }
-  
 }
 
 decrementQuantity(index: number) {
-  if(this.items[index].Quantity > 0 ) {
+  console.log('Handling decrement for index:', index); // Debugging line
+  if (this.items[index].Quantity > 0) {
     this.items[index].Quantity--;
-    if(this.editingIndex === index) {
-      this.newItems.Quantity = this.items[index].Quantity
+    if (this.editingIndex === index) {
+      this.newItems.Quantity = this.items[index].Quantity;
     }
   }
 }
@@ -60,6 +65,17 @@ decrementQuantity(index: number) {
 saveEdit(index: number ) {
   this.editingIndex= index;
   this.newItems = {...this.items[index]}
+  console.log('Handling edit for index:', index); // Debugging line
 }
 
+deleteItem(index: number) {
+  this.items.splice(index);
+  if(this.editingIndex === index) {
+    this.editingIndex = null
+    this.resetNewItem();
+  }
+}
+
+
+ 
 }
