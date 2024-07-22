@@ -1,7 +1,7 @@
 export interface Shopping {
     itemCode: string;
     itemName: string;
-    Price: string;
-    Quantity: number
-    Brand: string
+    Price: number;
+    Quantity: number;
+    Brand: string;
 }

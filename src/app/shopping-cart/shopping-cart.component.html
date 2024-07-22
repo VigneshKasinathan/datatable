@@ -2,24 +2,41 @@
 <div class="flex">
     <div class="shopping-cart">
         <h2>Shopping Cart</h2>
-        <form (ngSubmit)="additem()">
+        <form (ngSubmit)="additem()" #itemForm="ngForm">
             <label for="itemName">Item Name: </label>
-            <input type="text" id="itemName" [(ngModel)]="newItems.itemName" name="itemName" required> 
-        
-            <label for="itemCode">Item Code: </label>
-            <input type="text" id="itemCode" [(ngModel)]="newItems.itemCode" name="itemCode" required> 
-        
-            <label for="Price">Price: </label>
-            <input type="text" id="Price" [(ngModel)]="newItems.Price" name="Price" required> 
+            <input type="text" id="itemName" [(ngModel)]="newItems.itemName" name="itemName" required #itemName="ngModel">  
+            <div *ngIf="itemName.invalid && (itemName.dirty || itemName.touched)">
+                <small class="error" *ngIf="itemName.errors && itemName.errors['required']">Item Name is required.</small>
+            </div>
 
-            <label for="Quantity">Price: </label>
-            <input type="number" id="Quantity" [(ngModel)]="newItems.Quantity"  name="Quantity" required> 
-        
+
+            <label for="itemCode">Item Code: </label>
+            <input type="text" id="itemCode" [(ngModel)]="newItems.itemCode" name="itemCode" required #itemCode="ngModel"> 
+            <div *ngIf="itemCode.invalid && (itemCode.dirty || itemCode.touched)">
+                <small class="error" *ngIf="itemCode.errors && itemCode.errors['required']">Item Name is required.</small>
+            </div>
+
+            <label for="Price">Price: </label>
+            <input type="number" id="Price" [(ngModel)]="newItems.Price" name="Price" required #price="ngModel"> 
+            <div *ngIf="price.invalid && ( price.dirty || price.touched )">
+                <small class="error" *ngIf="price.errors && price.errors['required']">Price is required.</small>
+                <small class="error" *ngIf="price.errors && price.errors['min']">Price must be at least 0.01.</small>
+            </div>
+            
+            <label for="Quantity">Quantity: </label>
+            <input type="number" id="Quantity" [(ngModel)]="newItems.Quantity"  name="Quantity" class="number" required #quantity="ngModel"> 
+            <div *ngIf="quantity.invalid && ( quantity.dirty || quantity.touched )">
+                <small class="error" *ngIf="quantity.errors && quantity.errors['required']">Quantity is required.</small>
+                <small class="error" *ngIf="quantity.errors && quantity.errors['min']">Quantity must be at least 1.</small>
+            </div>
+
             <label for="Brand">Brand: </label>
-            <input type="text" id="Brand" [(ngModel)]="newItems.Brand" 
-             name="Brand" required> 
-        
-            <button type="submit"> {{ editingIndex !== null ? 'Update' : 'Submit' }}</button>
+            <input type="text" id="Brand" [(ngModel)]="newItems.Brand" name="Brand" required #brand="ngModel"> 
+            <div *ngIf="brand.invalid && (brand.dirty || brand.touched)">
+                <small class="error" *ngIf="brand.errors && brand.errors['required']">Item Name is required.</small>
+            </div>
+
+            <button type="submit" [disabled]="itemForm.invalid"> {{ editingIndex !== null ? 'Update' : 'Submit' }}</button>
         </form>
     </div>
 

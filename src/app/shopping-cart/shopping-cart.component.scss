@@ -6,6 +6,12 @@
   border-radius: 8px;
 }
   
+.error {
+  font-size: 14px;
+  color: red;
+}
+
+
 .shopping-cart form {
   display: flex;
   flex-direction: column;
@@ -39,4 +45,10 @@
 .flex { 
   display: flex;
   margin:  0px 10px;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

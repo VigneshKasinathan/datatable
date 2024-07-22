@@ -7,13 +7,15 @@ import { Shopping } from './shopping';
   styleUrls: ['./shopping-cart.component.scss']
 })
 export class ShoppingCartComponent  {
+
   counter = 0;
+
 
 items: Shopping[] = [];
 newItems: Shopping = {
   itemName: '',
   itemCode:'',
-  Price:'',
+  Price: 0,
   Brand: '', 
   Quantity: 0
 }
@@ -22,7 +24,7 @@ totalQuantity = 0
 
 editingIndex: number|null= null;
 
-constructor(private cdr: ChangeDetectorRef) {}
+
 
 additem() {
 if(this.editingIndex != null) {
@@ -38,7 +40,7 @@ resetNewItem(){
   this.newItems = {
     itemName: '',
     itemCode: '',
-    Price: '',
+    Price: 0,
     Quantity: 0,
     Brand: ''
   }
